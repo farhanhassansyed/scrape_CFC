@@ -45,6 +45,7 @@ def create_dict(clean_list):
     json_object = json.dumps(word_count, indent=4)
 
     # Writing to words_freq.json
+    print("Creating words_freq.json ...")
     with open("words_freq.json", "w") as outfile:
         outfile.write(json_object)
 
@@ -92,7 +93,8 @@ def add_to_json(images, scripts, fonts):
     # Serializing json
     json_object = json.dumps(dictionary, indent=4)
 
-    # Writing to sample.json
+    # Writing to .json
+    print("Creating external_resources.json ...")
     with open("external_resources.json", "w") as outfile:
         outfile.write(json_object)
 
@@ -140,3 +142,4 @@ def find_resources():
 if __name__ == '__main__':
     find_resources() # 2
     scrape_PP() # 3 and 4
+    print("Scraping Completed Successfully!")
