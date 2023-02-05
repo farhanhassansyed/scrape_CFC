@@ -1,10 +1,83 @@
 import json
 from bs4 import BeautifulSoup
-import urllib
 import re
 import requests
 import os
-from collections import Counter
+
+
+def find_PP():
+    # content of URL
+    url = "https://www.cfcunderwriting.com"
+    html_page = requests.get(url)
+
+    # Parse HTML Code
+    soup = BeautifulSoup(html_page.text, 'html.parser')
+
+    # Find all the <a> tags
+    links = soup.find_all('a')
+
+    # Iterate over the links and look for the "Privacy Policy" page
+    privacy_policy_link = None
+    for link in links:
+        if "Privacy Policy" in link.text:
+            privacy_policy_link = link["href"]
+            break
+
+    # Print the location of the "Privacy Policy" page
+    if privacy_policy_link:
+        print("The Privacy Policy page is located at:", privacy_policy_link)
+        privacy_policy_link = url + privacy_policy_link
+    else:
+        print("No Privacy Policy page was found.")
+
+    # Return link
+    return privacy_policy_link
+
+def create_dict(clean_list):
+    word_count = {}
+    for word in clean_list:
+        if word in word_count:
+            word_count[word] += 1
+        else:
+            word_count[word] = 1
+
+     # Serializing json
+    json_object = json.dumps(word_count, indent=4)
+
+    # Writing to words_freq.json
+    with open("words_freq.json", "w") as outfile:
+        outfile.write(json_object)
+
+def clean_wordlist(wordlist):
+    clean_list = []
+    for word in wordlist:
+        symbols = "!@#$%^&*()_-+={[}]|/\;:\"<>?/., "
+        for i in range(len(symbols)):
+            word = word.replace(symbols[i], '')
+        if len(word) > 0:
+            clean_list.append(word)
+    # Create Dictionary and write results to json
+    create_dict(clean_list)
+
+def scrape_PP():
+    # Look for location of Privacy Policy in the URL
+    url = find_PP() # "https://www.cfcunderwriting.com/en-gb/support/privacy-policy/"
+    # Check whether Privacy Policy link exists
+    if not(url):
+        print("Could not find Privacy Policy")
+        return
+
+    worldlist = []
+    html_page = requests.get(url)
+    # Parse HTML Code
+    soup = BeautifulSoup(html_page.text, 'html.parser')
+    for each_text in soup.findAll('main', attrs={"class": "individual-content"}):
+        content = each_text.text
+        words = content.lower().split()
+        for each_word in words:
+            worldlist.append(each_word)
+        # get rid of symbols, create a dictionary and write to json
+        clean_wordlist(worldlist)
 
 def add_to_json(images, scripts, fonts):
 
@@ -66,4 +139,5 @@ def find_resources():
     add_to_json(images,scripts,fonts)
 
 if __name__ == '__main__':
-    find_resources()
+    find_resources() # 2
+    scrape_PP() # 3 and 4
