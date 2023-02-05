@@ -25,8 +25,8 @@ def find_PP():
 
     # Print the location of the "Privacy Policy" page
     if privacy_policy_link:
-        print("The Privacy Policy page is located at:", privacy_policy_link)
         privacy_policy_link = url + privacy_policy_link
+        print("The Privacy Policy page is located at:", privacy_policy_link)
     else:
         print("No Privacy Policy page was found.")
 
@@ -111,7 +111,7 @@ def find_resources():
         # Uncomment part below to filter out external images
         if src: # and src.startswith(("http", "https")) and not(src.startswith(url)):
             images.append(src)
-    print("\n Images: \n", images)
+    #print("\n Images: \n", images)
 
     scripts = []
     # find all scripts in URL
@@ -119,7 +119,7 @@ def find_resources():
         src = script.get("src")
         if src and src.startswith(("http", "https")) and not(url in src):
             scripts.append(src)
-    print("\n Scripts here: \n", scripts)
+    #print("\n Scripts here: \n", scripts)
 
 
     fonts = set()
@@ -133,7 +133,7 @@ def find_resources():
             for rule in font_face_rules:
                fonts.update(re.findall(r"font-family: \'([^\)]+)\'", rule, re.MULTILINE))
     fonts = list(fonts) # Convert set to list
-    print("Fonts: ", fonts)
+    #print("Fonts: ", fonts)
 
     add_to_json(images,scripts,fonts)
 
