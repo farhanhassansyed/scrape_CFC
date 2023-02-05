@@ -62,6 +62,7 @@ def clean_wordlist(wordlist):
 def scrape_PP():
     # Look for location of Privacy Policy in the URL
     url = find_PP() # "https://www.cfcunderwriting.com/en-gb/support/privacy-policy/"
+
     # Check whether Privacy Policy link exists
     if not(url):
         print("Could not find Privacy Policy")
@@ -69,6 +70,7 @@ def scrape_PP():
 
     worldlist = []
     html_page = requests.get(url)
+
     # Parse HTML Code
     soup = BeautifulSoup(html_page.text, 'html.parser')
     for each_text in soup.findAll('main', attrs={"class": "individual-content"}):
@@ -105,12 +107,9 @@ def find_resources():
     # find all images in URL
     images = []
     for img in soup.findAll('img'):
-        #print(img.get('src'), "\n")
-        #if url in img.get('src'):
-         #   print("Image from page\n")
-        #else:
         src = img.get('src')
-        if src: # and src.startswith(("http", "https")):
+        # Uncomment part below to filter out external images
+        if src: # and src.startswith(("http", "https")) and not(src.startswith(url)):
             images.append(src)
     print("\n Images: \n", images)
 
@@ -133,8 +132,8 @@ def find_resources():
             font_face_rules = re.findall(r"@font-face\s*{.*?}", style_content, re.DOTALL)
             for rule in font_face_rules:
                fonts.update(re.findall(r"font-family: \'([^\)]+)\'", rule, re.MULTILINE))
-    fonts = list(fonts)
-    print("\n Fonts: ", fonts)
+    fonts = list(fonts) # Convert set to list
+    print("Fonts: ", fonts)
 
     add_to_json(images,scripts,fonts)
 
