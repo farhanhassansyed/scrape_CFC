@@ -38,5 +38,23 @@ def find_images():
     print(scripts, "\n")
 
 
+    fonts = set()
+    # find all fonts in URL
+    for link in soup.find_all("link", rel="stylesheet"):
+        link_url = link.get("href")
+        if link_url.startswith(("http", "https")):
+            response = requests.get(link_url)
+            style_content = response.text
+            #print("Style Content printing: \n", style_content)
+            font_face_rules = re.findall(r"@font-face\s*{.*?}", style_content, re.DOTALL)
+            #print("\n \n Font Face Rules Printing:", font_face_rules)
+            for rule in font_face_rules:
+                #print("rule is: ", rule)
+                #print("only url: ", re.findall(r"url\(([^\)]+)\)", rule, re.MULTILINE))
+                fonts.update(re.findall(r"font-family: \'([^\)]+)\'", rule, re.MULTILINE))
+    fonts = list(fonts)
+    print(fonts)
+
+
 if __name__ == '__main__':
     find_images()
